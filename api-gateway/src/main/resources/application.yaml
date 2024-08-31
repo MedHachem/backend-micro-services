@@ -18,10 +18,6 @@ spring:
           uri: lb://user-manager
           predicates:
             - Path=/employee/**
-        - id: department-service
-          uri: lb://department-service
-          predicates:
-            - Path=/department/**
 
 management:
   tracing:
