@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: user-manager   # This sets the name of your Spring application to "user-manager"
+
+  config:
+    import: "optional:configserver:http://localhost:8088"  # This tells the application to optionally import configuration from a Spring Cloud Config server running on http://localhost:8088
