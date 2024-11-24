@@ -1,0 +1,11 @@
+
+spring:
+  application:
+    name: quran-manager   # This sets the name of your Spring application to "quran-manager"
+
+  config:
+    import: "optional:configserver:http://localhost:8088"  # This tells the application to optionally import configuration from a Spring Cloud Config server running on http://localhost:8088
+
+api:
+  quran:
+    base-url: "https://api.quran.com/api/v4/"

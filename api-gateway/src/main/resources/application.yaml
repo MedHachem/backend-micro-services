@@ -18,6 +18,10 @@ spring:
           uri: lb://user-manager
           predicates:
             - Path=/employee/**
+        - id: quran-manager
+          uri: lb://quran-manager
+          predicates:
+            - Path=/quran/**
 
 management:
   tracing:
