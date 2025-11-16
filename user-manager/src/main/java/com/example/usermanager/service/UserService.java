@@ -1,17 +1,18 @@
 package com.example.usermanager.service;
 
-import com.example.usermanager.entity.User;
+import com.example.usermanager.dto.UserDTO;
 
 import java.util.List;
 
 public interface UserService {
-    User createUser(User user);
+    UserDTO createUser(UserDTO userDTO);
 
-    User getUserById(Long id);
+    UserDTO getUserById(Long id);
 
-    List<User> getAllUsers();
+    List<UserDTO> getAllUsers();
 
-    User updateUser(Long id, User user);
+
+    UserDTO updateUser(Long id, UserDTO userDTO);
 
     void deleteUser(Long id);
 }
