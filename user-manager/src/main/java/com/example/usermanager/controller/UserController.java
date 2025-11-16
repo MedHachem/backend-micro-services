@@ -1,35 +1,37 @@
-package controller;
+package com.example.usermanager.controller;
 
-import entity.user;
+import com.example.usermanager.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.userService;
+import com.example.usermanager.service.UserService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@RequiredArgsConstructor
-public class userController {
-    private final userService userService;
+@AllArgsConstructor
+public class UserController {
+    private final UserService userService;
     @PostMapping
-    public ResponseEntity<user> createUser(@RequestBody user user) {
+    public ResponseEntity<User> createUser(@RequestBody User user) {
         return ResponseEntity.ok(userService.createUser(user));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<user> getUserById(@PathVariable Long id) {
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<user>> getAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<user> updateUser(@PathVariable Long id, @RequestBody user user) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         return ResponseEntity.ok(userService.updateUser(id, user));
     }
 

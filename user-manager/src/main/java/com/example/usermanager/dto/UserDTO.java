@@ -1,4 +1,4 @@
-package dto;
+package com.example.usermanager.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class userDTO {
+public class UserDTO {
     private Long id;
     private String firstname;
     private String lastname;

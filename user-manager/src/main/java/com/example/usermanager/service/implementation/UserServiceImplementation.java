@@ -1,37 +1,37 @@
-package service.implementation;
+package com.example.usermanager.service.implementation;
 
-import entity.user;
+import com.example.usermanager.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import repository.userRepository;
-import service.userService;
+import com.example.usermanager.repository.UserRepository;
+import com.example.usermanager.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
-public class userServiceImplementation implements userService {
-    private final userRepository userRepository;
+public class UserServiceImplementation implements UserService {
+    private final UserRepository userRepository;
     @Override
-    public user createUser(user user) {
+    public User createUser(User user) {
         user.setCreatedAt(LocalDateTime.now());
         return userRepository.save(user);
     }
 
     @Override
-    public user getUserById(Long id) {
+    public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @Override
-    public List<user> getAllUsers() {
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     @Override
-    public user updateUser(Long id, user user) {
-        user existing = getUserById(id);
+    public User updateUser(Long id, User user) {
+        User existing = getUserById(id);
         existing.setFirstname(user.getFirstname());
         existing.setLastname(user.getLastname());
         existing.setEmail(user.getEmail());
