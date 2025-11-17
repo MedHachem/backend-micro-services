@@ -1,54 +1,111 @@
 package com.spring.usersecurity.Services.Implem;
+
 import com.spring.usersecurity.DAO.Request.SignInRequest;
 import com.spring.usersecurity.DAO.Request.SignUpRequest;
 import com.spring.usersecurity.DAO.Response.JwtAuthenticationResponse;
-import com.spring.usersecurity.User.User;
-import com.spring.usersecurity.User.Role;
 import com.spring.usersecurity.Services.AuthenticationService;
 import com.spring.usersecurity.Services.JwtService;
-import com.spring.usersecurity.User.UserRepository;
+import com.spring.usersecurity.User.UserPrincipal;
+import com.spring.usersecurity.client.UserManagerClient;
+import com.spring.usersecurity.dto.UserRequest;
+import com.spring.usersecurity.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import org.springframework.security.authentication.AuthenticationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final UserRepository userRepository;
-
+    private final UserManagerClient userManagerClient;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     @Override
     public JwtAuthenticationResponse signup(SignUpRequest request) {
-        var user = User.builder().nom(request.getNom()).prenom(request.getPrenom())
-                .email(request.getEmail()).password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.valueOf(request.getRole())).build();
-        userRepository.save(user);
-        var jwt = jwtService.generateToken(user);
-        return JwtAuthenticationResponse.builder().token(jwt)
-                .id(user.getId())
-                .nom(user.getNom())
-                .prenom(user.getPrenom())
-                .role(String.valueOf(user.getRole()))
+
+        // 1️⃣ Encoder le mot de passe
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+        // 2️⃣ Construire UserRequest pour envoyer au UserManager MS
+        UserRequest userRequest = new UserRequest(
+                request.getFirstname(),
+                request.getLastName(),
+                request.getEmail(),
+                encodedPassword,
+                request.getRole()
+        );
+
+        // 3️⃣ Créer l'utilisateur via Feign Client
+        UserResponse createdUser = userManagerClient.createUser(userRequest);
+
+        // 4️⃣ Logger pour debug
+        logger.info("User created in UserManager: id={}, firstname={}, lastname={}, email={}, role={}",
+                createdUser.id(),
+                createdUser.firstname(),
+                createdUser.lastname(),
+                createdUser.email(),
+                createdUser.role());
+
+        // 5️⃣ Construire UserPrincipal pour Spring Security (avec mot de passe encodé)
+        UserPrincipal userPrincipal = new UserPrincipal(
+                createdUser.email(),
+                encodedPassword,          // ici mot de passe encodé
+                createdUser.role()
+        );
+
+        // 6️⃣ Claims pour JWT
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", createdUser.role());
+
+        // 7️⃣ Générer le token JWT
+        String jwt = jwtService.generateToken(userPrincipal);
+
+        // 8️⃣ Retourner la réponse
+        return JwtAuthenticationResponse.builder()
+                .token(jwt)
+                .id(createdUser.id())
+                .firstName(createdUser.firstname())
+                .lastName(createdUser.lastname())
+                .role(createdUser.role())
                 .build();
     }
 
+
+
     @Override
     public JwtAuthenticationResponse signin(SignInRequest request) {
+
+// --- Log UserPrincipal ---
+        logger.info("UserPrincipal created: lastname={}, password={}",
+                request.getEmail(),
+                request.getPassword());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
-        var jwt = jwtService.generateToken(user);
+        var user = userManagerClient.getByEmail(request.getEmail());
+        logger.info("UserPrincipal by email: {}", user);
+
+        if (user == null) {
+            throw new IllegalArgumentException("Invalid email or password.");
+        }
+        UserDetails userPrincipal = new UserPrincipal(user);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.role());
+        String jwt = jwtService.generateToken(userPrincipal);
         return JwtAuthenticationResponse.builder().token(jwt)
-                .id(user.getId())
-                .nom(user.getNom())
-                .prenom(user.getPrenom())
-                .role(String.valueOf(user.getRole()))
+                .id(user.id())
+                .firstName(user.firstname())
+                .lastName(user.lastname())
+                .role(user.role())
                 .build();
     }
 

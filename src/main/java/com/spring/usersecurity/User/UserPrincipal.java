@@ -1,10 +1,6 @@
 package com.spring.usersecurity.User;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.spring.usersecurity.dto.UserResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,27 +8,27 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
-@Table(name="users")
 
-public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String nom;
-    private String prenom;
-    private String email;
-    private String password;
-    @Enumerated(EnumType.STRING)
-    private Role role ;
+public class UserPrincipal implements UserDetails {
+    private final String email;
+    private final String password;
+    private final String role;
+
+    public UserPrincipal(UserResponse user) {
+        this.email = user.email();
+        this.password = user.password();
+        this.role = user.role();
+    }
+    public UserPrincipal(String email, String password, String role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role));
     }
 
     @Override
