@@ -17,8 +17,10 @@ public class User {
     private Long id;
     private String firstname;
     private String lastname;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     private LocalDateTime createdAt;
 }

@@ -1,5 +1,6 @@
 package com.example.usermanager.dto;
 
+import com.example.usermanager.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,4 +15,5 @@ public class UserDTO {
     private String firstname;
     private String lastname;
     private String email;
+    private String role;
 }
