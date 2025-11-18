@@ -1,29 +1,26 @@
-package entity;
+package com.example.usermanager.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class user {
+@Getter
+@Setter
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String firstname;
     private String lastname;
-
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
-
     private String password;
-
+    @Enumerated(EnumType.STRING)
+    private Role role;
     private LocalDateTime createdAt;
 }

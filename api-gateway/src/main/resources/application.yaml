@@ -1,10 +1,5 @@
 server:
-  port: 8060
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+  port: 8090
 
 spring:
   application:
@@ -17,13 +12,16 @@ spring:
         - id: user-manager
           uri: lb://user-manager
           predicates:
-            - Path=/employee/**
-#        - id: quran-manager
-#          uri: lb://quran-manager
-#          predicates:
-#            - Path=/quran/**
+            - Path=/user/v1/**
+          filters:
+            - StripPrefix=2
+      discovery:
+        locator:
+          enabled: true
 
-management:
-  tracing:
-    sampling:
-      probability: 1.0
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
