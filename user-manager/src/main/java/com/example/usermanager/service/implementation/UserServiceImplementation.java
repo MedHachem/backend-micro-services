@@ -8,6 +8,8 @@ import com.example.usermanager.entity.User;
 import com.example.usermanager.mapper.PrincipalUserMapper;
 import com.example.usermanager.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.example.usermanager.repository.UserRepository;
 import com.example.usermanager.service.UserService;
@@ -23,8 +25,11 @@ public class UserServiceImplementation implements UserService {
     private final UserMapper userMapper;
     private final PrincipalUserMapper principalUserMapper;
     private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserMapper.class);
+
     @Override
-    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+    public UserResponseDTO createUser(  UserRequestDTO userRequestDTO) {
+        logger.info("Received UserRequestDTO: {}", userRequestDTO);
         User user = principalUserMapper.toEntity(userRequestDTO);
         user.setCreatedAt(LocalDateTime.now());
 
