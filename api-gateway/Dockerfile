@@ -13,8 +13,8 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
 # Copier le script d'attente
-COPY wait-for.sh ./wait-for.sh
-RUN chmod +x wait-for.sh
+COPY wait-for-eureka.sh ./wait-for-eureka.sh
+RUN chmod +x wait-for-eureka.sh
 
 # Installer netcat pour tester les ports
 RUN apt-get update && apt-get install -y netcat-openbsd && apt-get clean
@@ -23,5 +23,5 @@ RUN apt-get update && apt-get install -y netcat-openbsd && apt-get clean
 EXPOSE 8080
 
 # Attendre Eureka ET Config Server avant de démarrer
-ENTRYPOINT ["./wait-for-eureka.sh", "service-registery", "8761", "./wait-for.sh", "config-server", "8088", "java", "-jar", "app.jar"]
+ENTRYPOINT ["./wait-for-eureka.sh", "service-registery", "8761", "config-server", "8088", "java", "-jar", "app.jar"]
 
