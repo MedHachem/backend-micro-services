@@ -12,9 +12,9 @@ WORKDIR /app
 # Copier le jar
 COPY --from=builder /app/target/*.jar app.jar
 
-# Copier le script wait-for-eureka
-COPY wait-for-eureka.sh ./wait-for-eureka.sh
-RUN chmod +x wait-for-eureka.sh
+# Copier le script wait-for
+COPY wait-for.sh ./wait-for.sh
+RUN chmod +x wait-for.sh
 
 # Installer netcat (nc) pour vérifier un port
 RUN apt-get update && apt-get install -y netcat-openbsd && apt-get clean
@@ -22,4 +22,4 @@ RUN apt-get update && apt-get install -y netcat-openbsd && apt-get clean
 EXPOSE 8087
 
 # Lancer d'abord le script puis le microservice
-ENTRYPOINT ["./wait-for-eureka.sh", "service-registery", "8761", "java", "-jar", "app.jar"]
+ENTRYPOINT ["./wait-for.sh", "service-registery", "8761","./wait-for.sh", "config-server", "8088", "java", "-jar", "app.jar"]
