@@ -1,22 +1,20 @@
-version: "3.9"
-
 services:
 
   # -----------------------------------------------------
   # 🏛️ EUREKA SERVER
-  # -----------------------------------------------------
-  eureka-server:
-    build: ./eureka-server
-    container_name: eureka-server
-    ports:
-      - "8761:8761"
-    networks:
-      - microservices-net
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761"]
-      interval: 10s
-      timeout: 3s
-      retries: 10
+  # -----------------------------------------------------      
+  service-registery:
+   build: ./service-registery
+   container_name: service-registery
+   ports:
+    - "8761:8761"
+   networks:
+    - microservices-net
+   healthcheck:
+     test: ["CMD", "curl", "-f", "http://service-registery:8761"]
+     interval: 10s
+     timeout: 3s
+     retries: 10
 
   # -----------------------------------------------------
   # ⚙️ CONFIG SERVER
@@ -25,16 +23,16 @@ services:
     build: ./config-server
     container_name: config-server
     depends_on:
-      eureka-server:
+      service-registery:
         condition: service_healthy
     ports:
       - "8088:8088"
     networks:
       - microservices-net
     environment:
-      EUREKA_SERVER: http://eureka-server:8761/eureka
+      EUREKA_SERVER: http://service-registery:8761/eureka
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8088/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://config-server:8088/actuator/health"]
       interval: 10s
       timeout: 3s
       retries: 10
@@ -43,7 +41,7 @@ services:
   # 🛡️ API GATEWAY
   # -----------------------------------------------------
   gateway:
-    build: ./gateway
+    build: ./api-gateway
     container_name: api-gateway
     depends_on:
       config-server:
@@ -54,10 +52,10 @@ services:
       - microservices-net
     environment:
       CONFIG_SERVER_URL: http://config-server:8088
-      EUREKA_SERVER: http://eureka-server:8761/eureka
+      EUREKA_SERVER: http://service-registery:8761/eureka
 
   # -----------------------------------------------------
-  # 🗃️ MYSQL DATABASE (for UserManager + AuthManager)
+  # 🗃️ MYSQL DATABASE (for UserManager)
   # -----------------------------------------------------
   mysql:
     image: mysql:8
@@ -90,32 +88,22 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       CONFIG_SERVER_URL: http://config-server:8088
-      EUREKA_SERVER: http://eureka-server:8761/eureka
+      EUREKA_SERVER: http://service-registery:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/usermanagerdb
       MYSQL_HOST: mysql
       MYSQL_USER: root
       MYSQL_PASSWORD: root
 
-  # -----------------------------------------------------
-  # 🔐 AUTH MANAGER
-  # -----------------------------------------------------
-  auth-manager:
-    build: ./auth-manager
-    container_name: auth-manager
-    depends_on:
-      config-server:
-        condition: service_healthy
-    ports:
-      - "8087:8087"
-    networks:
-      - microservices-net
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      USER_MANAGER_URL: http://user-manager:8082
-      CONFIG_SERVER_URL: http://config-server:8088
-      EUREKA_SERVER: http://eureka-server:8761/eureka
-
-networks:
-  microservices-net:
-
+# -----------------------------------------------------
+# 🔹 VOLUMES
+# -----------------------------------------------------
 volumes:
   mysql-data:
+
+# -----------------------------------------------------
+# 🔹 NETWORKS
+# -----------------------------------------------------
+networks:
+  microservices-net:
+    driver: bridge
+
