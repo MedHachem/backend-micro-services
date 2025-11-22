@@ -6,10 +6,10 @@ spring:
     name: user-manager
 
   config:
-    import: "optional:configserver:http://localhost:8088"
+    import: "optional:configserver:http://config-server:8088"
 
   datasource:
-    url: jdbc:mysql://localhost:3306/usermanagerdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    url: jdbc:mysql://mysql:3306/usermanagerdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
