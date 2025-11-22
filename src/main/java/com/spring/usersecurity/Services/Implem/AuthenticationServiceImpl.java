@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,7 +40,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         // 2️⃣ Construire UserRequest pour envoyer au UserManager MS
         UserRequest userRequest = new UserRequest(
                 request.getFirstname(),
-                request.getLastName(),
+                request.getLastname(),
                 request.getEmail(),
                 encodedPassword,
                 request.getRole()
@@ -86,11 +87,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public JwtAuthenticationResponse signin(SignInRequest request) {
 
 // --- Log UserPrincipal ---
-        logger.info("UserPrincipal created: lastname={}, password={}",
+        logger.info("UserPrincipal created: email={}, password={}",
                 request.getEmail(),
                 request.getPassword());
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        } catch (AuthenticationException ex) {
+            logger.error("Authentication failed for {}: {}", request.getEmail(), ex.getMessage());
+            throw ex; // ou gérer selon ton besoin
+        }
         var user = userManagerClient.getByEmail(request.getEmail());
         logger.info("UserPrincipal by email: {}", user);
 
