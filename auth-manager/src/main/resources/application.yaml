@@ -4,21 +4,14 @@ server:
 spring:
   application:
     name: auth-manager
-
-  config:
-    import: "optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}"
-
-  security:
-    user:
-      name: ${SECURITY_USER_NAME}
-      password: ${SECURITY_USER_PASSWORD}
-
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}   
 logging:
   level:
     org.springframework.web: INFO
 
-token: ${JWT_SECRET}
 
-usermanager:
-  url: "http://${USER_MANAGER_HOST}:${USER_MANAGER_PORT}"
+
 

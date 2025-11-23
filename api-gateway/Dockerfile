@@ -23,5 +23,5 @@ RUN apt-get update && apt-get install -y netcat-openbsd && apt-get clean
 EXPOSE 8080
 
 # Attendre Eureka ET Config Server avant de démarrer
-ENTRYPOINT ["./wait-for.sh", "service-registery", "8761", "./wait-for.sh", "config-server", "8088", "java", "-jar", "app.jar"]
+ENTRYPOINT ["./wait-for.sh", "service-registery", "8761", "config-server", "8088", "java", "-jar", "app.jar"]
 

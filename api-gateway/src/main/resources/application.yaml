@@ -3,11 +3,13 @@ server:
 security:
   public:
     endpoints: /auth/**,
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}  
 spring:
   application:
     name: api-gateway
-  config:
-    import: "optional:configserver:http://config-server:8088"
   cloud:
     gateway:
       routes:

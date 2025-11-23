@@ -19,7 +19,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtServiceImpl implements JwtService {
-    @Value("${token}")
+    @Value("${JWT_SECRET}")
     private String jwtSigningKey;
     @Override
     public String extractUserName(String token) {

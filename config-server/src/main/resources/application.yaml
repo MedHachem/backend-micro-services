@@ -1,6 +1,13 @@
 server:
   port: 8088
 spring:
+  cloud:
+    config:
+      server:
+        native:
+          fail-on-empty-directory: false
+      allowOverride: true
+      overrideNone: false
   profiles:
     active: native
 
