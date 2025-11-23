@@ -9,6 +9,12 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: auth-manager
+          uri: lb://auth-manager
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
         - id: user-manager
           uri: lb://user-manager
           predicates:

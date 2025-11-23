@@ -3,6 +3,7 @@ package com.example.authmanager.Services.Implem;
 import com.example.authmanager.DAO.Request.SignInRequest;
 import com.example.authmanager.DAO.Request.SignUpRequest;
 import com.example.authmanager.DAO.Response.JwtAuthenticationResponse;
+import com.example.authmanager.DAO.Response.JwtAuthorizationResponse;
 import com.example.authmanager.Services.AuthenticationService;
 import com.example.authmanager.Services.JwtService;
 import com.example.authmanager.User.UserPrincipal;
@@ -34,10 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public JwtAuthenticationResponse signup(SignUpRequest request) {
 
-        // 1️⃣ Encoder le mot de passe
         String encodedPassword = passwordEncoder.encode(request.getPassword());
-
-        // 2️⃣ Construire UserRequest pour envoyer au UserManager MS
         UserRequest userRequest = new UserRequest(
                 request.getFirstname(),
                 request.getLastname(),
@@ -45,35 +43,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 encodedPassword,
                 request.getRole()
         );
-
-        // 3️⃣ Créer l'utilisateur via Feign Client
         UserResponse createdUser = userManagerClient.createUser(userRequest);
-
-        // 4️⃣ Logger pour debug
-        logger.info("User created in UserManager: id={}, firstname={}, lastname={}, email={}, role={}",
-                createdUser.id(),
-                createdUser.firstname(),
-                createdUser.lastname(),
-                createdUser.email(),
-                createdUser.role());
-
-        // 5️⃣ Construire UserPrincipal pour Spring Security (avec mot de passe encodé)
-        UserPrincipal userPrincipal = new UserPrincipal(
-                createdUser.email(),
-                encodedPassword,          // ici mot de passe encodé
-                createdUser.role()
-        );
-
-        // 6️⃣ Claims pour JWT
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", createdUser.role());
-
-        // 7️⃣ Générer le token JWT
-        String jwt = jwtService.generateToken(userPrincipal);
-
-        // 8️⃣ Retourner la réponse
         return JwtAuthenticationResponse.builder()
-                .token(jwt)
                 .id(createdUser.id())
                 .firstName(createdUser.firstname())
                 .lastName(createdUser.lastname())
@@ -84,22 +55,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public JwtAuthenticationResponse signin(SignInRequest request) {
-
-// --- Log UserPrincipal ---
-        logger.info("UserPrincipal created: email={}, password={}",
-                request.getEmail(),
-                request.getPassword());
+    public JwtAuthorizationResponse signin(SignInRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (AuthenticationException ex) {
             logger.error("Authentication failed for {}: {}", request.getEmail(), ex.getMessage());
-            throw ex; // ou gérer selon ton besoin
+            throw ex;
         }
         var user = userManagerClient.getByEmail(request.getEmail());
-        logger.info("UserPrincipal by email: {}", user);
-
         if (user == null) {
             throw new IllegalArgumentException("Invalid email or password.");
         }
@@ -107,10 +71,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.role());
         String jwt = jwtService.generateToken(userPrincipal);
-        return JwtAuthenticationResponse.builder().token(jwt)
+        return JwtAuthorizationResponse.builder().token(jwt)
                 .id(user.id())
-                .firstName(user.firstname())
-                .lastName(user.lastname())
                 .role(user.role())
                 .build();
     }

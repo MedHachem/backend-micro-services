@@ -6,18 +6,19 @@ spring:
     name: auth-manager
 
   config:
-      import: "optional:configserver:http://config-server:8088"
+    import: "optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}"
 
   security:
     user:
-      name: "user"
-      password: "password"
+      name: ${SECURITY_USER_NAME}
+      password: ${SECURITY_USER_PASSWORD}
 
 logging:
   level:
     org.springframework.web: INFO
 
-token: "413F4428472B4B6250655368566D5970337336763979244226452948404D6351"
+token: ${JWT_SECRET}
 
 usermanager:
-  url: "http://user-manager:8082"
+  url: "http://${USER_MANAGER_HOST}:${USER_MANAGER_PORT}"
+

@@ -24,30 +24,17 @@ public class UserServiceImpl implements UserService {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                logger.info("Loading user by username: {}", username);
                 UserResponse user = userManagerClient.getByEmail(username);
                 if (user == null) {
                     throw new UsernameNotFoundException("User not found");
                 }
                 String encodedPassword = userManagerClient.getEncodedPassword(username);
-                UserPrincipal principal = new UserPrincipal(user.email(), encodedPassword, user.role());
                 if (encodedPassword == null) {
                     throw new UsernameNotFoundException("User password not found");
                 }
-                logger.info("Returning UserPrincipal with password length: {}", principal.getPassword().length());
-
-//                logger.info("UserResponse received: id={}, firstname={}, lastname={}, email={}, role={}, passwordEncodedPresent={}",
-//                        user.id(),
-//                        user.firstname(),
-//                        user.lastname(),
-//                        user.email(),
-//                        user.role(),
-//                        user.password() != null
-//                );
-                logger.info("User {} retrieved. Encoded password present: {}", username, encodedPassword);
                 return new UserPrincipal(
                         user.email(),
-                        user.password(),
+                        encodedPassword,
                         user.role()
                 );
             }
