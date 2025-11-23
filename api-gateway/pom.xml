@@ -63,6 +63,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.example</groupId>-->
+<!--            <artifactId>common-security</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 

@@ -17,7 +17,6 @@ public class InternalUserController {
         this.userRepository = userRepository;
     }
 
-    // Endpoint interne pour récupérer le mot de passe encodé
     @GetMapping("/{email}/encoded-password")
     public ResponseEntity<String> getEncodedPassword(@PathVariable String email) {
         return userRepository.findByEmail(email)

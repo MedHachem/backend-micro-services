@@ -1,6 +1,8 @@
 server:
   port: 8090
-
+security:
+  public:
+    endpoints: /auth/**,
 spring:
   application:
     name: api-gateway
