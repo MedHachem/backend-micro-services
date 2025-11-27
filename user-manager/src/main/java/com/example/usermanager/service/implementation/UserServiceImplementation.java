@@ -10,6 +10,7 @@ import com.example.usermanager.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import com.example.usermanager.repository.UserRepository;
 import com.example.usermanager.service.UserService;
@@ -26,18 +27,39 @@ public class UserServiceImplementation implements UserService {
     private final PrincipalUserMapper principalUserMapper;
     private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserMapper.class);
-
+    private final RabbitTemplate rabbitTemplate;
     @Override
-    public UserResponseDTO createUser(  UserRequestDTO userRequestDTO) {
+    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
         logger.info("Received UserRequestDTO: {}", userRequestDTO);
+
         User user = principalUserMapper.toEntity(userRequestDTO);
         user.setCreatedAt(LocalDateTime.now());
 
         if (user.getRole() == null) {
             user.setRole(Role.User);
         }
-        return principalUserMapper.toResponse(userRepository.save(user));
+
+        User savedUser = userRepository.save(user);
+
+        // Créer un DTO à envoyer
+        UserDTO userDTO = UserDTO.builder()
+                .id(savedUser.getId())
+                .firstname(savedUser.getFirstname())
+                .lastname(savedUser.getLastname())
+                .email(savedUser.getEmail())
+                .role(savedUser.getRole().name())
+                .build();
+
+        // Envoyer le DTO à RabbitMQ
+        rabbitTemplate.convertAndSend(
+                "userExchange",
+                "user.registered",
+                userDTO
+        );
+
+        return principalUserMapper.toResponse(savedUser);
     }
+
 
 
     @Override

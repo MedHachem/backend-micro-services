@@ -1,0 +1,30 @@
+server:
+  port: 8095
+spring:
+  application:
+    name: notification-manager
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hechemmohamed9@gmail.com
+    password: opql uupj vnys wvaq
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+
+  amqp:
+    deserialization:
+      trust-all: true
+  rabbitmq:
+    host: localhost  # plus tard docker : rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+
+  # Nom de la queue / exchange / routing key
+  notifications:
+    queue: user.notifications
+    exchange: userExchange
+    routing-key: user.registered

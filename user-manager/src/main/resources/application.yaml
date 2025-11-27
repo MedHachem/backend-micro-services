@@ -4,8 +4,13 @@ server:
 spring:
   application:
     name: user-manager
+
+  profiles:
+    active: local
+
   datasource:
-      driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
