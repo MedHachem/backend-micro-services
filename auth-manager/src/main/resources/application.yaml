@@ -4,10 +4,12 @@ server:
 spring:
   application:
     name: auth-manager
+  profiles:
+    active: local
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}   
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
 logging:
   level:
     org.springframework.web: INFO
