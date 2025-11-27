@@ -1,6 +1,6 @@
-package com.example.notificationmanager.Service.Implementation;
+package com.example.notificationmanager.service.Implementation;
 
-import com.example.notificationmanager.Service.NotificationService;
+import com.example.notificationmanager.service.NotificationService;
 import com.example.notificationmanager.model.User;
 import org.springframework.stereotype.Service;
 

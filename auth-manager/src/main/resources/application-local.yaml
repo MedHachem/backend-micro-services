@@ -1,0 +1,16 @@
+server:
+  port: 8087
+
+spring:
+  config:
+    import: optional:configserver:http://localhost:8088
+  security:
+    user:
+      name: user
+      password: password
+
+jwt:
+  secret: 413F4428472B4B6250655368566D5970337336763979244226452948404D6351
+
+usermanager:
+  url: http://localhost:8082

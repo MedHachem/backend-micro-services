@@ -1,5 +1,6 @@
 package com.example.usermanager.service.implementation;
 
+import com.example.usermanager.dto.SmsMessageDTO;
 import com.example.usermanager.dto.UserDTO;
 import com.example.usermanager.dto.UserRequestDTO;
 import com.example.usermanager.dto.UserResponseDTO;
@@ -55,6 +56,15 @@ public class UserServiceImplementation implements UserService {
                 "userExchange",
                 "user.registered",
                 userDTO
+        );
+        SmsMessageDTO smsMessage = new SmsMessageDTO(
+                "+21629235322",      // phone
+                "Bienvenue " + savedUser.getFirstname() + ",hech yaatek saha khedma mezyena :*** !"  // text
+        );
+        rabbitTemplate.convertAndSend(
+                "smsExchange",
+                "sms.send",
+                smsMessage
         );
 
         return principalUserMapper.toResponse(savedUser);

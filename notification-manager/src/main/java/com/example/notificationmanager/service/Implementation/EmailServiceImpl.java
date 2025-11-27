@@ -1,6 +1,6 @@
-package com.example.notificationmanager.Service.Implementation;
+package com.example.notificationmanager.service.Implementation;
 
-import com.example.notificationmanager.Service.EmailService;
+import com.example.notificationmanager.service.EmailService;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;

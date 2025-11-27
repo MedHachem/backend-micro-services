@@ -28,3 +28,15 @@ spring:
     queue: user.notifications
     exchange: userExchange
     routing-key: user.registered
+  profiles:
+    active: test
+app:
+  sms:
+    queue: sms-queue
+    exchange: smsExchange
+    routing-key: sms.send
+    provider: whatsapp
+    from: "whatsapp:+14155238886"
+    account-sid: ${TWILIO_ACCOUNT_SID}
+    auth-token: ${TWILIO_AUTH_TOKEN}
+

@@ -8,25 +8,53 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String QUEUE = "user.notifications";
-    public static final String EXCHANGE = "userExchange";
-    public static final String ROUTING_KEY = "user.registered";
+
+    // -------------------- EMAIL --------------------
+    public static final String EMAIL_QUEUE = "user.notifications";
+    public static final String EMAIL_EXCHANGE = "userExchange";
+    public static final String EMAIL_ROUTING_KEY = "user.registered";
+
     @Bean
-    Queue queue() {
-        return QueueBuilder.durable(QUEUE).build();
+    Queue emailQueue() {
+        return QueueBuilder.durable(EMAIL_QUEUE).build();
     }
+
     @Bean
-    DirectExchange exchange() {
-        return new DirectExchange(EXCHANGE);
+    DirectExchange emailExchange() {
+        return new DirectExchange(EMAIL_EXCHANGE);
     }
+
     @Bean
-    Binding binding(Queue queue, DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+    Binding emailBinding(Queue emailQueue, DirectExchange emailExchange) {
+        return BindingBuilder.bind(emailQueue).to(emailExchange).with(EMAIL_ROUTING_KEY);
     }
+
+    // -------------------- SMS --------------------
+    public static final String SMS_QUEUE = "sms-queue";
+    public static final String SMS_EXCHANGE = "smsExchange";
+    public static final String SMS_ROUTING_KEY = "sms.send";
+
+    @Bean
+    Queue smsQueue() {
+        return QueueBuilder.durable(SMS_QUEUE).build();
+    }
+
+    @Bean
+    DirectExchange smsExchange() {
+        return new DirectExchange(SMS_EXCHANGE);
+    }
+
+    @Bean
+    Binding smsBinding(Queue smsQueue, DirectExchange smsExchange) {
+        return BindingBuilder.bind(smsQueue).to(smsExchange).with(SMS_ROUTING_KEY);
+    }
+
+    // -------------------- CONVERTEUR JSON --------------------
     @Bean
     public org.springframework.amqp.support.converter.MessageConverter jsonMessageConverter() {
         return new org.springframework.amqp.support.converter.Jackson2JsonMessageConverter();
     }
+
     @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
             ConnectionFactory connectionFactory) {

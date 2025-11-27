@@ -1,4 +1,4 @@
-package com.example.notificationmanager.Service;
+package com.example.notificationmanager.service;
 
 import com.example.notificationmanager.model.User;
 
