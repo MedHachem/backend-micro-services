@@ -16,19 +16,14 @@ public class ContentGeneratorService {
 
     public GeneratedContentResponse generateContent(GenerateContentRequest request) {
 
-        // 1. Charger template selon type de contenu
         String rawTemplate = templateService.loadTemplate(request.getTemplateId(), request.getContentType());
 
-        // 2. Remplacer variables
         String filledTemplate = templateService.applyVariables(rawTemplate, request.getVariables());
 
-        // 3. Construire le prompt
         String prompt = PromptFactory.buildPrompt(filledTemplate, request);
 
-        // 4. Appel LLM
         GeneratedContentResponse response = llmService.generateContent(prompt);
 
-        // 5. Envoi direct via RabbitMQ si demandé
         if (request.isSendDirectly()) {
             rabbitProducer.sendContent(response, request.getRecipient(), request.getContentType());
         }

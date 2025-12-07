@@ -40,7 +40,6 @@ public class LLMService {
                         JsonNode messageNode = node.get("message");
                         if (messageNode != null && messageNode.has("content")) {
                             String chunk = messageNode.get("content").asText();
-                            // 🔹 Log du contenu extrait du chunk
                             System.out.println("📝 Contenu extrait du chunk : " + chunk);
                             contentBuilder.append(messageNode.get("content").asText());
                         }
@@ -49,17 +48,15 @@ public class LLMService {
             String raw = contentBuilder.toString().trim();
 
             if (raw.startsWith("```json")) {
-                raw = raw.substring(7).trim(); // retire les 7 premiers caractères
+                raw = raw.substring(7).trim();
             } else if (raw.startsWith("```")) {
-                raw = raw.substring(3).trim(); // retire les 3 premiers caractères
+                raw = raw.substring(3).trim();
             }
 
-// Si ça finit par ```
             if (raw.endsWith("```")) {
                 raw = raw.substring(0, raw.length() - 3).trim();
             }
             System.out.println("✅ Contenu LLM final : " + raw);
-// Vérifie si le JSON est complet
             if (!raw.startsWith("{") || !raw.endsWith("}")) {
                 throw new RuntimeException("LLM returned incomplete JSON: " + raw);
             }

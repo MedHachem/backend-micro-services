@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 
 public class RabbitMQConfig {
-    public static final String USER_QUEUE = "user.notifications"; // doit matcher userExchange/user.registered
+    public static final String USER_QUEUE = "user.notifications";
     public static final String USER_EXCHANGE = "userExchange";
     public static final String USER_ROUTING_KEY = "user.registered";
     @Bean
@@ -29,7 +29,6 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(userQueue).to(userExchange).with(USER_ROUTING_KEY);
     }
 
-    // Queue pour envoyer le contenu généré
     public static final String AI_GENERATED_EXCHANGE = "generatedExchange";
     public static final String AI_GENERATED_ROUTING_KEY = "generated.content";
 

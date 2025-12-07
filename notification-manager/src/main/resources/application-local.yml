@@ -1,0 +1,21 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hechemmohamed9@gmail.com
+    password: opql uupj vnys wvaq
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+app:
+  sms:
+    from: "whatsapp:+14155238886"
+    account-sid: "AC068aaa19c8104b2d6c0ec49f06192795"
+    auth-token: "400a6ac2bdd3b023273a7587110bc010"

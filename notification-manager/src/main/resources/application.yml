@@ -1,48 +1,20 @@
 server:
   port: 8095
 spring:
+  profiles:
+    active: local
   application:
     name: notification-manager
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: hechemmohamed9@gmail.com
-    password: opql uupj vnys wvaq
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls.enable: true
-#    host: localhost
-#    port: 1025
-#    username:
-#    password:
-#    properties:
-#      mail.smtp.auth: false
-#      mail.smtp.starttls.enable: false
   amqp:
     deserialization:
       trust-all: true
-  rabbitmq:
-    host: localhost  # plus tard docker : rabbitmq
-    port: 5672
-    username: guest
-    password: guest
-
-  # Nom de la queue / exchange / routing key
   notifications:
     queue: user.notifications
     exchange: userExchange
     routing-key: user.registered
-  profiles:
-    active: test
 app:
   sms:
     queue: sms-queue
     exchange: smsExchange
     routing-key: sms.send
     provider: whatsapp
-    from: "whatsapp:+14155238886"
-    account-sid: "AC068aaa19c8104b2d6c0ec49f06192795"
-    auth-token: "400a6ac2bdd3b023273a7587110bc010"
-

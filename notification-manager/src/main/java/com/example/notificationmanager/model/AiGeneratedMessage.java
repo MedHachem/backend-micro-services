@@ -11,7 +11,6 @@ public class AiGeneratedMessage {
     private String contentType; // "email" ou "sms"
 
     public String getContent() {
-        // retourne bodyHtml si tu veux envoyer HTML, sinon bodyText
         return bodyHtml != null ? bodyHtml : bodyText;
     }
 }

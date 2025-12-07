@@ -1,4 +1,4 @@
-package com.example.notificationmanager.service.Implementation;
+package com.example.notificationmanager.service.implementation;
 
 import com.example.notificationmanager.service.SmsSenderService;
 import com.twilio.Twilio;
@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("test")
 public class SmsSenderServiceImpl implements SmsSenderService {
     @Value("${app.sms.from}")
     private String from;
