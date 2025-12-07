@@ -2,6 +2,7 @@ package com.example.notificationmanager.listner;
 
 import com.example.notificationmanager.model.AiGeneratedMessage;
 import com.example.notificationmanager.service.EmailService;
+import com.example.notificationmanager.service.FirebasePushService;
 import com.example.notificationmanager.service.SmsSenderService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -10,10 +11,11 @@ import org.springframework.stereotype.Component;
 public class NotificationListener {
     private final EmailService emailService ;
     private final SmsSenderService  smsSenderService;
-
-    public NotificationListener(EmailService emailService, SmsSenderService smsSenderService) {
+    private final FirebasePushService firebasePushService;
+    public NotificationListener(EmailService emailService, SmsSenderService smsSenderService, FirebasePushService firebasePushService) {
         this.emailService=emailService;
         this.smsSenderService=smsSenderService;
+        this.firebasePushService=firebasePushService;
     }
     @RabbitListener(queues = "notification.generated", containerFactory = "rabbitListenerContainerFactory")
     public void handleGeneratedContent(AiGeneratedMessage message) {
@@ -25,7 +27,10 @@ public class NotificationListener {
                 emailService.sendEmail(message.getRecipient(), message.getSubject(), message.getContent());
             } else if ("sms".equalsIgnoreCase(message.getContentType())) {
                 smsSenderService.send(message.getRecipient(), message.getContent());
+            }else if("push_notification".equalsIgnoreCase(message.getContentType())) {
+                 firebasePushService.sendPush("fcmToken" , message.getSubject(), message.getContent());
             }
+
         } catch (Exception e) {
             System.err.println("⚠️ Échec de l'envoi pour " + message.getRecipient() + ": " + e.getMessage());
             // éventuellement loguer l'erreur ou envoyer dans une DLQ

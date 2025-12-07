@@ -67,6 +67,42 @@ public class AiContentListener {
         } catch (Exception e) {
             logger.error("Erreur lors de la génération du contenu SMS pour {}", user, e);
         }
+// ------------------- FIREBASE PUSH NOTIFICATION ------------------- //
+
+        String firebaseToken = "jjjjjjjjjjjj"; // S’il existe, sinon à ajouter dans User
+
+        logger.info("Préparation de la Push Notification Firebase pour {} - token : {}",
+                user.getFirstname(), firebaseToken);
+
+        GenerateContentRequest pushRequest = new GenerateContentRequest();
+        pushRequest.setTemplateId("welcome_push");
+        pushRequest.setContentType("push_notification");
+        pushRequest.setVariables(Map.of(
+                "user_name", user.getFirstname()
+        ));
+        pushRequest.setRecipient(firebaseToken); // tu enverras le token FCM ici
+        pushRequest.setSendDirectly(true);
+
+        try {
+            contentGeneratorService.generateContent(pushRequest);
+            logger.info("🔥 Push Notification générée et envoyée via Firebase pour {}", user.getFirstname());
+        } catch (WebClientResponseException.TooManyRequests e) {
+            logger.warn("OpenAI rate limit atteint. Push sera réessayée plus tard. User: {}", user, e);
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erreur lors de la génération du contenu PUSH pour {}", user, e);
+        }
+
+
+        try {
+            contentGeneratorService.generateContent(smsRequest);
+            logger.info("✅ Contenu SMS généré et envoyé à {}", smsRecipient);
+        } catch (WebClientResponseException.TooManyRequests e) {
+            logger.warn("OpenAI rate limit atteint pour l'utilisateur {}. SMS sera réessayé plus tard.", user, e);
+            throw e;
+        } catch (Exception e) {
+            logger.error("Erreur lors de la génération du contenu SMS pour {}", user, e);
+        }
     }
 
 
