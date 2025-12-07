@@ -57,15 +57,15 @@ public class UserServiceImplementation implements UserService {
                 "user.registered",
                 userDTO
         );
-        SmsMessageDTO smsMessage = new SmsMessageDTO(
-                "+21629235322",      // phone
-                "Bienvenue " + savedUser.getFirstname() + ",hech yaatek saha khedma mezyena :*** !"  // text
-        );
-        rabbitTemplate.convertAndSend(
-                "smsExchange",
-                "sms.send",
-                smsMessage
-        );
+//        SmsMessageDTO smsMessage = new SmsMessageDTO(
+//                "+21629235322",      // phone
+//                "Bienvenue " + savedUser.getFirstname() + ",hech yaatek saha khedma mezyena :*** !"  // text
+//        );
+//        rabbitTemplate.convertAndSend(
+//                "smsExchange",
+//                "sms.send",
+//                smsMessage
+//        );
 
         return principalUserMapper.toResponse(savedUser);
     }

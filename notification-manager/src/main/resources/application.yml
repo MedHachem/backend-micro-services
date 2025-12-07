@@ -13,7 +13,13 @@ spring:
         smtp:
           auth: true
           starttls.enable: true
-
+#    host: localhost
+#    port: 1025
+#    username:
+#    password:
+#    properties:
+#      mail.smtp.auth: false
+#      mail.smtp.starttls.enable: false
   amqp:
     deserialization:
       trust-all: true
@@ -37,6 +43,6 @@ app:
     routing-key: sms.send
     provider: whatsapp
     from: "whatsapp:+14155238886"
-    account-sid: ${TWILIO_ACCOUNT_SID}
-    auth-token: ${TWILIO_AUTH_TOKEN}
+    account-sid: "AC068aaa19c8104b2d6c0ec49f06192795"
+    auth-token: "400a6ac2bdd3b023273a7587110bc010"
 

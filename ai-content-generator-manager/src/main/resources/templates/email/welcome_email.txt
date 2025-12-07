@@ -1,0 +1,13 @@
+Bonjour {{user_name}},
+
+Bienvenue sur ProKick ! 🎉
+Votre compte a été activé avec succès.
+
+Voici quelques informations utiles pour bien démarrer :
+- Nom d'utilisateur : {{user_name}}
+- Email associé : {{user_email}}
+- Date d'inscription : {{signup_date}}
+
+Nous vous souhaitons beaucoup de succès sur la plateforme.
+
+L’équipe ProKick

@@ -1,0 +1,12 @@
+server:
+  port: 8097
+spring:
+  config:
+    import: optional:configserver:http://localhost:8088
+  application:
+    name: ai-content-generator-manager
+  cloud:
+    netflix:
+      eureka:
+        client:
+          enabled: false
