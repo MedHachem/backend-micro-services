@@ -25,6 +25,12 @@ spring:
             - Path=/user/v1/**
           filters:
             - StripPrefix=2
+        - id: notification-manager
+          uri: lb://notification-manager
+          predicates:
+            - Path=/notification/v1/**
+          filters:
+            - StripPrefix=2
       discovery:
         locator:
           enabled: true

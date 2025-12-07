@@ -135,6 +135,25 @@ services:
         SPRING_PROFILES_ACTIVE: prod
         SPRING_CONFIG_IMPORT: optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}
         EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_SERVER_URL}
+  # -----------------------------------------------------
+  # 👤 AI CONTENT GENERATOR MANAGER MS
+  # -----------------------------------------------------
+  ai-content-generator-manager:
+    build: ./ai-content-generator-manager
+    container_name: ai-content-generator-manager
+    depends_on:
+      config-server:
+        condition: service_healthy
+      mysql:
+        condition: service_started
+    ports:
+      - "8097:8097"
+    networks:
+      - microservices-net
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_SERVER_URL}
 
 # -----------------------------------------------------
 # 🔹 VOLUMES
