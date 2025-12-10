@@ -157,6 +157,21 @@ services:
         SPRING_PROFILES_ACTIVE: prod
         SPRING_CONFIG_IMPORT: optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}
         EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_SERVER_URL}
+    # -----------------------------------------------------
+    # 👤 OLLAMA
+    # -----------------------------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "${LLM_PORT}:11434" # port API
+    networks:
+      - microservices-net
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   # -----------------------------------------------------
   # 👤 AI CONTENT GENERATOR MANAGER MS
   # -----------------------------------------------------
@@ -166,8 +181,6 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
-      mysql:
-        condition: service_started
     ports:
       - "8097:8097"
     networks:

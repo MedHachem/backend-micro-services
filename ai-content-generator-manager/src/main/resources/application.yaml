@@ -5,3 +5,7 @@ spring:
     active: local
   application:
     name: ai-content-generator-manager
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}

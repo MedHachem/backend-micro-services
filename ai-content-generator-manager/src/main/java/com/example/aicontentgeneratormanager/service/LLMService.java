@@ -26,9 +26,11 @@ public class LLMService {
         """.formatted(escapeJson(prompt));
 
             StringBuilder contentBuilder = new StringBuilder();
-
+            String baseUrl = String.format("http://%s:%s/api/chat",
+                    System.getenv("LLM_HOST"),
+                    System.getenv("LLM_PORT"));
             webClient.post()
-                    .uri("http://localhost:11434/api/chat")
+                    .uri(baseUrl)
                     .header("Content-Type", "application/json")
                     .bodyValue(payload)
                     .retrieve()
