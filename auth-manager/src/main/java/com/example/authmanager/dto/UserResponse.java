@@ -7,5 +7,7 @@ public record UserResponse(
         String email,
         String role,
         String password,
+        String phone,
+        String fcmToken,
         Boolean enabled
 ) {}

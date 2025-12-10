@@ -20,4 +20,9 @@ app:
   sms:
     from: "whatsapp:+14155238886"
     account-sid: "AC068aaa19c8104b2d6c0ec49f06192795"
-    auth-token: "400a6ac2bdd3b023273a7587110bc010"
+    auth-token: "c52e1f3cc83fd4b69f0e13844f0ad2fc"
+
+firebase:
+  project-id: ""
+  client-email: ""
+  private-key: ""

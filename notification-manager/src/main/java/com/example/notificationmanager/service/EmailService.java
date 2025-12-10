@@ -1,5 +1,7 @@
 package com.example.notificationmanager.service;
 
+import com.example.notificationmanager.model.GeneratedContentResponse;
+
 public interface EmailService {
-    void sendEmail(String to, String subject, String body);
+    void sendEmailNotification(GeneratedContentResponse content);
 }

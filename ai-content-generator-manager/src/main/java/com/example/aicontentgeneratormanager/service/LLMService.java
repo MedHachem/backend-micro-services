@@ -35,12 +35,8 @@ public class LLMService {
                     .bodyToFlux(JsonNode.class)
                     .toIterable()
                     .forEach(node -> {
-                        System.out.println("📦 Chunk JSON reçu : " + node.toString());
-
                         JsonNode messageNode = node.get("message");
                         if (messageNode != null && messageNode.has("content")) {
-                            String chunk = messageNode.get("content").asText();
-                            System.out.println("📝 Contenu extrait du chunk : " + chunk);
                             contentBuilder.append(messageNode.get("content").asText());
                         }
                     });
@@ -70,7 +66,6 @@ public class LLMService {
 
     }
 
-    // Échappe les guillemets et retours à la ligne dans le prompt pour JSON
     private String escapeJson(String text) {
         return text.replace("\\", "\\\\")
                 .replace("\"", "\\\"")

@@ -1,5 +1,6 @@
 package com.example.notificationmanager.service.implementation;
 
+import com.example.notificationmanager.model.GeneratedContentResponse;
 import com.example.notificationmanager.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -16,19 +17,23 @@ public class EmailServiceImpl implements EmailService {
         this.mailSender = mailSender;
     }
 
-    public void sendEmail(String to, String subject, String bodyHtml) {
-
+    public void sendEmailNotification(GeneratedContentResponse content) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(bodyHtml, true);
+
+            helper.setTo(content.getRecipient());
+            helper.setSubject(content.getSubject());
+            helper.setText(content.getBodyHtml(), true);
+
             mailSender.send(message);
-            System.out.println("✅ Email dynamique envoyé à : " + to);
+
+            System.out.println("📧 Email envoyé à : " + content.getRecipient());
+
         } catch (MessagingException e) {
-            System.err.println("⚠️ Échec de l'envoi pour " + to + ": " + e.getMessage());
+            System.err.println("⚠️ Erreur envoi email à " + content.getRecipient() + ": " + e.getMessage());
         }
     }
+
 }
 

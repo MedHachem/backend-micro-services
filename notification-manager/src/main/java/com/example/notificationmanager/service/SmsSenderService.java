@@ -1,6 +1,8 @@
 package com.example.notificationmanager.service;
 
+import com.example.notificationmanager.model.GeneratedContentResponse;
+
 public interface SmsSenderService {
-    void send(String to, String message);
+    void sendSmsNotification(GeneratedContentResponse content);
 
 }

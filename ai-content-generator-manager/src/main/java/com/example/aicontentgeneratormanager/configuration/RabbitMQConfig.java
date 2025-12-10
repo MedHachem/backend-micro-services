@@ -30,7 +30,6 @@ public class RabbitMQConfig {
     }
 
     public static final String AI_GENERATED_EXCHANGE = "generatedExchange";
-    public static final String AI_GENERATED_ROUTING_KEY = "generated.content";
 
     @Bean
     DirectExchange aiGeneratedExchange() {

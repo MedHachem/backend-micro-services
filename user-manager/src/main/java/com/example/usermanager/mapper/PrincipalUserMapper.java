@@ -22,6 +22,8 @@ public class PrincipalUserMapper {
         user.setLastname(request.getLastname());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
+        user.setPhone(request.getPhone());
+        user.setFcmToken(request.getFcmToken());
         user.setRole(request.getRole() != null ? Role.valueOf(request.getRole()) : Role.User);
         user.setCreatedAt(LocalDateTime.now());
         logger.info("Mapped User entity: {}", user);
@@ -35,6 +37,7 @@ public class PrincipalUserMapper {
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
                 .email(user.getEmail())
+                .phone(user.getPhone())
                 .role(user.getRole() != null ? user.getRole().name() : null)
                 .build();
     }

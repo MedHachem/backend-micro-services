@@ -5,5 +5,7 @@ public record UserRequest(
         String lastname,
         String email,
         String password,
+        String phone,
+        String fcmToken,
         String role
 ) {}

@@ -41,6 +41,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 request.getLastname(),
                 request.getEmail(),
                 encodedPassword,
+                request.getPhone(),
+                request.getFcmToken(),
                 request.getRole()
         );
         UserResponse createdUser = userManagerClient.createUser(userRequest);

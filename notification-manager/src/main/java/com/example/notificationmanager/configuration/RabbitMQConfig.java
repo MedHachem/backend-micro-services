@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    // -------------------- AI GENERATED --------------------
+    // -------------------- AI GENERATED CONTENT --------------------
     public static final String AI_GENERATED_QUEUE = "notification.generated";
     public static final String AI_EXCHANGE = "generatedExchange";
     public static final String AI_ROUTING_KEY = "generated.content";
@@ -28,7 +28,7 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(aiGeneratedQueue).to(aiExchange).with(AI_ROUTING_KEY);
     }
 
-    // -------------------- CONVERTER JSON --------------------
+    // -------------------- JSON CONVERTER  --------------------
     @Bean
     public org.springframework.amqp.support.converter.MessageConverter jsonMessageConverter() {
         return new org.springframework.amqp.support.converter.Jackson2JsonMessageConverter();

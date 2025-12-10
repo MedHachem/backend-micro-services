@@ -20,6 +20,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
     private String password;
+    private String phone;
+    private String fcmToken;
     @Enumerated(EnumType.STRING)
     private Role role;
     private LocalDateTime createdAt;

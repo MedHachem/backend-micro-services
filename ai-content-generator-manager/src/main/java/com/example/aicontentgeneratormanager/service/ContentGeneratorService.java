@@ -18,15 +18,13 @@ public class ContentGeneratorService {
 
         String rawTemplate = templateService.loadTemplate(request.getTemplateId(), request.getContentType());
 
-        String filledTemplate = templateService.applyVariables(rawTemplate, request.getVariables());
+        String filledTemplate = templateService.applyVariables(rawTemplate, request.getData());
 
         String prompt = PromptFactory.buildPrompt(filledTemplate, request);
 
         GeneratedContentResponse response = llmService.generateContent(prompt);
 
-        if (request.isSendDirectly()) {
-            rabbitProducer.sendContent(response, request.getRecipient(), request.getContentType());
-        }
+        rabbitProducer.sendContent(response, request.getRecipientForContentType(), request.getContentType());
 
         return response;
     }

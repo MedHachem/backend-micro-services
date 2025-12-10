@@ -1,3 +1,3 @@
-Bonjour {{user_name}} !
+Bonjour {{username}} !
 Bienvenue sur ProKick. Votre compte est activé et prêt à l’usage.
 Profitez de votre expérience dès maintenant !

@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class GeneratedContentResponse {
-    private String subject;     //For emails
+    private String subject;
     private String bodyText;
-    private String bodyHtml;    // optional
+    private String bodyHtml;
     private String modelUsed;
     private int tokensUsed;
 }

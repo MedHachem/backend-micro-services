@@ -11,5 +11,6 @@ public class ContentSendMessage {
     private String contentType;
     private String subject;
     private String bodyHtml;
+    private String bodyText;
     private String recipient;
 }

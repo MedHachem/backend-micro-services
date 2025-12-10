@@ -1,9 +1,6 @@
 package com.example.usermanager.service.implementation;
 
-import com.example.usermanager.dto.SmsMessageDTO;
-import com.example.usermanager.dto.UserDTO;
-import com.example.usermanager.dto.UserRequestDTO;
-import com.example.usermanager.dto.UserResponseDTO;
+import com.example.usermanager.dto.*;
 import com.example.usermanager.entity.Role;
 import com.example.usermanager.entity.User;
 import com.example.usermanager.mapper.PrincipalUserMapper;
@@ -18,7 +15,9 @@ import com.example.usermanager.service.UserService;
 
 import java.nio.file.attribute.UserPrincipal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,36 +35,37 @@ public class UserServiceImplementation implements UserService {
         User user = principalUserMapper.toEntity(userRequestDTO);
         user.setCreatedAt(LocalDateTime.now());
 
-        if (user.getRole() == null) {
-            user.setRole(Role.User);
-        }
+        if (user.getRole() == null) {user.setRole(Role.User);}
 
         User savedUser = userRepository.save(user);
-
-        // Créer un DTO à envoyer
-        UserDTO userDTO = UserDTO.builder()
-                .id(savedUser.getId())
-                .firstname(savedUser.getFirstname())
-                .lastname(savedUser.getLastname())
-                .email(savedUser.getEmail())
-                .role(savedUser.getRole().name())
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("username", user.getFirstname() + " " + user.getLastname());
+        NotificationRequestDTO emailReq = NotificationRequestDTO.builder()
+                .eventType("user_registration")
+                .contentType("email")
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .fcmToken(user.getFcmToken())
+                .data(variables)
                 .build();
-
-        // Envoyer le DTO à RabbitMQ
+        NotificationRequestDTO smsReq = NotificationRequestDTO.builder()
+                .eventType("user_registration")
+                .contentType("sms")
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .fcmToken(user.getFcmToken())
+                .data(variables)
+                .build();
         rabbitTemplate.convertAndSend(
                 "userExchange",
                 "user.registered",
-                userDTO
+                smsReq
         );
-//        SmsMessageDTO smsMessage = new SmsMessageDTO(
-//                "+21629235322",      // phone
-//                "Bienvenue " + savedUser.getFirstname() + ",hech yaatek saha khedma mezyena :*** !"  // text
-//        );
-//        rabbitTemplate.convertAndSend(
-//                "smsExchange",
-//                "sms.send",
-//                smsMessage
-//        );
+        rabbitTemplate.convertAndSend(
+                "userExchange",
+                "user.registered",
+                emailReq
+        );
 
         return principalUserMapper.toResponse(savedUser);
     }
@@ -103,7 +103,24 @@ public class UserServiceImplementation implements UserService {
         existing.setFirstname(userDTO.getFirstname());
         existing.setLastname(userDTO.getLastname());
         existing.setEmail(userDTO.getEmail());
+        existing.setPhone(userDTO.getPhone());
+        existing.setFcmToken(userDTO.getFcmToken());
         User updated = userRepository.save(existing);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("username", updated.getFirstname() + " " + updated.getLastname());
+        variables.put("email",updated.getEmail());
+
+        NotificationRequestDTO smsReq = NotificationRequestDTO.builder()
+                .eventType("reset_password")
+                .contentType("sms")
+                .phone(updated.getPhone())
+                .data(variables)
+                .build();
+        rabbitTemplate.convertAndSend(
+                "userExchange",
+                "user.registered",
+                smsReq
+        );
         return userMapper.toDTO(updated);
     }
 

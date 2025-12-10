@@ -1,0 +1,8 @@
+Bonjour {{username}},
+
+Bienvenue sur ProKick ! 🎉
+Votre compte a été activé avec succès.
+
+Nous vous souhaitons beaucoup de succès sur la plateforme.
+
+L’équipe ProKick
