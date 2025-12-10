@@ -58,12 +58,12 @@ public class UserServiceImplementation implements UserService {
                 .build();
         rabbitTemplate.convertAndSend(
                 "userExchange",
-                "user.registered",
+                "user.registration.created",
                 smsReq
         );
         rabbitTemplate.convertAndSend(
                 "userExchange",
-                "user.registered",
+                "user.registration.created",
                 emailReq
         );
 
@@ -118,7 +118,7 @@ public class UserServiceImplementation implements UserService {
                 .build();
         rabbitTemplate.convertAndSend(
                 "userExchange",
-                "user.registered",
+                "user.profile.updated",
                 smsReq
         );
         return userMapper.toDTO(updated);

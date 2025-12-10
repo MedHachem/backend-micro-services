@@ -11,22 +11,56 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 
 public class RabbitMQConfig {
+
     public static final String USER_QUEUE = "user.notifications";
     public static final String USER_EXCHANGE = "userExchange";
-    public static final String USER_ROUTING_KEY = "user.registered";
+    public static final String USER_ROUTING_KEY = "user.#";
+
+    // --- DEAD LETTER CONFIG ---
+    public static final String DLX_EXCHANGE = USER_EXCHANGE + ".dlx";
+    public static final String DLQ = USER_QUEUE + ".dlq";
+    public static final String DLQ_ROUTING_KEY = USER_QUEUE + ".dlq";
+
     @Bean
-    Queue userQueue() {
-        return QueueBuilder.durable(USER_QUEUE).build();
+    public Queue userQueue() {
+        return QueueBuilder.durable(USER_QUEUE)
+                .withArgument("x-dead-letter-exchange", DLX_EXCHANGE)
+                .withArgument("x-dead-letter-routing-key", DLQ_ROUTING_KEY)
+                .build();
     }
 
     @Bean
-    DirectExchange userExchange() {
-        return new DirectExchange(USER_EXCHANGE);
+    public TopicExchange userExchange() {
+        return new TopicExchange(USER_EXCHANGE);   // Topic pour routing key générique
     }
 
     @Bean
-    Binding userBinding(Queue userQueue, DirectExchange userExchange) {
-        return BindingBuilder.bind(userQueue).to(userExchange).with(USER_ROUTING_KEY);
+    public Binding userBinding() {
+        return BindingBuilder
+                .bind(userQueue())
+                .to(userExchange())
+                .with(USER_ROUTING_KEY);
+    }
+
+    // --- DEAD LETTER EXCHANGE ---
+    @Bean
+    public DirectExchange deadLetterExchange() {
+        return new DirectExchange(DLX_EXCHANGE);
+    }
+
+    // --- DEAD LETTER QUEUE ---
+    @Bean
+    public Queue deadLetterQueue() {
+        return QueueBuilder.durable(DLQ).build();
+    }
+
+    // --- BIND DLQ ---
+    @Bean
+    public Binding deadLetterBinding() {
+        return BindingBuilder
+                .bind(deadLetterQueue())
+                .to(deadLetterExchange())
+                .with(DLQ_ROUTING_KEY);
     }
 
     public static final String AI_GENERATED_EXCHANGE = "generatedExchange";

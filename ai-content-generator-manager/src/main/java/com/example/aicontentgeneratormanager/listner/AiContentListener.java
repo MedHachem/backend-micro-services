@@ -20,13 +20,7 @@ public class AiContentListener {
     }
     @RabbitListener(queues = "user.notifications", containerFactory = "rabbitListenerContainerFactory")
     public void handleNotificationRequest(GenerateContentRequest request) {
-        try {
-            contentGeneratorService.generateContent(request);
-        } catch (Exception e) {
-            logger.error("❌ Erreur génération contenu AI pour eventType={} : {}",
-                    request.getEventType(), e.getMessage());
-            // Optionnel: envoyer en DLQ
-        }
+       contentGeneratorService.generateContent(request);
     }
 
 
