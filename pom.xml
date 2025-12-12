@@ -14,6 +14,8 @@
         <module>auth-manager</module>
         <module>user-manager</module>
         <module>api-gateway</module>
+        <module>notification-manager</module>
+        <module>ai-content-generator-manager</module>
     </modules>
 
     <properties>
