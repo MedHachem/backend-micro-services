@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "user-manager"
+    }
+
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Branche à builder')
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo "➡️ Checkout branche : ${params.BRANCH_NAME}"
+                git branch: "${params.BRANCH_NAME}",
+                    url: "https://github.com/MedHachem/backend-micro-services.git"
+            }
+        }
+
+        stage('Navigate to MS') {
+            steps {
+                dir('user-manager') {
+                    echo "➡️ On travaille dans user-manager"
+                }
+            }
+        }
+
+        stage('Build Maven') {
+            steps {
+                dir('user-manager') {
+                    echo "➡️ Maven clean package"
+                    sh "mvn clean package -DskipTests"
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                dir('user-manager') {
+                    echo "➡️ Build Docker image"
+                    sh "docker build -t ${IMAGE_NAME}:latest ."
+                }
+            }
+        }
+
+
+    }
+}
