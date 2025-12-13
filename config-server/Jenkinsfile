@@ -1,0 +1,86 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "hachem27/config-server"
+        DOCKER_TAG = "1.0.0"
+    }
+
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Branche à builder')
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo "➡️ Checkout branche : ${params.BRANCH_NAME}"
+                git branch: "${params.BRANCH_NAME}",
+                    url: "https://github.com/MedHachem/backend-micro-services.git"
+            }
+        }
+
+        stage('Navigate to MS') {
+            steps {
+                dir('config-server') {
+                    echo "➡️ On travaille dans config-server"
+                }
+            }
+        }
+
+        stage('Build Maven') {
+            steps {
+                dir('config-server') {
+                    echo "➡️ Maven clean package"
+                    sh "mvn clean package -DskipTests"
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('config-server') {
+                    echo "➡️ Build Docker image avec tag ${DOCKER_TAG}"
+                    sh "docker build -t ${IMAGE_NAME}:${DOCKER_TAG} ."
+                }
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                echo "➡️ Login Docker Hub"
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                dir('config-server') {
+                    echo "➡️ Push Docker image vers Docker Hub"
+                    sh "docker push ${IMAGE_NAME}:${DOCKER_TAG}"
+                }
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                echo "➡️ Nettoyage des images locales"
+                sh "docker rmi ${IMAGE_NAME}:${DOCKER_TAG} || true"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Pipeline réussi ! Docker image pushée : ${IMAGE_NAME}:${DOCKER_TAG}"
+        }
+        failure {
+            echo "❌ Pipeline échoué ! Vérifie les logs."
+        }
+        always {
+            echo "🔄 Fin du pipeline."
+        }
+    }
+}
