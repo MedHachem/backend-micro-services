@@ -4,6 +4,7 @@ import com.example.aicontentgeneratormanager.dto.GeneratedContentResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -12,7 +13,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class LLMService {
 
     private final WebClient webClient;
+    @Value("${llm.host}")
+    private String llmHost;
 
+    @Value("${llm.port}")
+    private String llmPort;
     public GeneratedContentResponse generateContent(String prompt) {
         try {
             String payload = """
@@ -26,9 +31,7 @@ public class LLMService {
         """.formatted(escapeJson(prompt));
 
             StringBuilder contentBuilder = new StringBuilder();
-            String baseUrl = String.format("http://%s:%s/api/chat",
-                    System.getenv("LLM_HOST"),
-                    System.getenv("LLM_PORT"));
+            String baseUrl = String.format("http://%s:%s/api/chat",llmHost, llmPort);
             webClient.post()
                     .uri(baseUrl)
                     .header("Content-Type", "application/json")

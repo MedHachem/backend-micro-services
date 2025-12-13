@@ -14,3 +14,7 @@ app:
     from: ${SMS_FROM}
     account-sid: ${SMS_ACCOUNT_SID}
     auth-token: ${SMS_AUTH_TOKEN}
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
