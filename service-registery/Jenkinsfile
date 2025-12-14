@@ -77,8 +77,8 @@ pipeline {
                     echo "➡️ Déploiement dans Kubernetes"
                     sh "pwd"
                     sh "ls -l"
-                    sh "kubectl apply -f service-registery-deployment.yaml"
-                    sh "kubectl apply -f service-registery.yaml"
+                    sh "kubectl apply -f service-registery-deployment.yaml --validate=false"
+                    sh "kubectl apply -f service-registery.yaml --validate=false"
                     sh "kubectl rollout restart deployment service-registery -n nip"
                 }
             }
