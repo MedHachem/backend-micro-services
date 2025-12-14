@@ -4,7 +4,19 @@ pipeline {
         KUBE_NAMESPACE = 'nip-infra'
         KUBE_CONFIG = '/home/jenkins/.kube/config'
     }
+    parameters {
+            string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Branche à builder')
+            choice(name: 'ACTION', choices: ['deploy'], description: 'Choisir  deploy')
+        }
     stages {
+     stage('Checkout') {
+                steps {
+                    echo "➡️ Checkout branche : ${params.BRANCH_NAME}"
+                    git branch: "${params.BRANCH_NAME}",
+                        url: "https://github.com/MedHachem/backend-micro-services.git"
+                }
+            }
+
         stage('Create Namespace') {
             steps {
                 sh "kubectl create namespace ${KUBE_NAMESPACE} || echo 'Namespace exists'"
@@ -22,7 +34,11 @@ pipeline {
             }
         }
 
-
+        stage('Apply MySQL PVC') {
+            steps {
+                sh "kubectl apply -f k8s/mysql/mysql-pvc.yaml --kubeconfig=${KUBE_CONFIG}"
+            }
+        }
 
         stage('Deploy MySQL') {
             steps {
