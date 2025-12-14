@@ -1,30 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: rabbitmq
   namespace: nip-infra
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: rabbitmq
   template:
     metadata:
       labels:
-        app: mysql
+        app: rabbitmq
     spec:
       containers:
-        - name: mysql
-          image: mysql:8.0
+        - name: rabbitmq
+          image: rabbitmq:3.11-management
           imagePullPolicy: Always
           ports:
-            - containerPort: 3306
+            - containerPort: 5672
+            - containerPort: 15672
           envFrom:
             - configMapRef:
-                name: mysql-config
+                name: rabbitmq-config
             - secretRef:
-                name: mysql-secret
+                name: rabbitmq-secret
       volumes:
-        - name: mysql-data
+        - name: rabbitmq-data
           persistentVolumeClaim:
-            claimName: mysql-pvc
+            claimName: rabbitmq-pvc
+

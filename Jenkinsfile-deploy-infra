@@ -6,6 +6,7 @@ pipeline {
     parameters {
             string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Branche à builder')
             choice(name: 'ACTION', choices: ['deploy'], description: 'Choisir  deploy')
+            choice(name: 'SERVICE', choices: ['all','mysql','rabbitmq','usermanager'], description: 'Service à déployer')
         }
     stages {
      stage('Checkout') {
@@ -21,39 +22,33 @@ pipeline {
                 sh "kubectl create namespace ${NAMESPACE} || echo 'Namespace exists'"
             }
         }
+         stage('Deploy Services') {
+             steps {
+                 script {
+                     def services = [
+                         mysql: [
+                             resources: ['mysql-pvc.yaml','mysql-config.yaml','mysql-secret.yaml','mysql-deployment.yaml','mysql-service.yaml'],
+                             selector: 'app=mysql'
+                         ],
+                         rabbitmq: [
+                             resources: ['rabbitmq-pvc.yaml','rabbitmq-deployment.yaml','rabbitmq-service.yaml','rabbitmq-config.yaml','rabbitmq-secret.yaml'],
+                             selector: 'app=rabbitmq'
+                         ],
+                     ]
 
-        stage('Create MySQL Secret') {
-            steps {
-                sh """
-                kubectl create secret generic mysql-secret -n ${NAMESPACE} \
-                  --from-literal=root-password=root \
-                  --from-literal=db-user=user \
-                  --from-literal=db-password=password || echo 'Secret exists'
-                """
-            }
-        }
+                     def targets = params.SERVICE == 'all' ? services.keySet() : [params.SERVICE]
 
-        stage('Apply MySQL PVC') {
-            steps {
-                sh "kubectl apply -f k8s/mysql/mysql-pvc.yaml -n ${NAMESPACE}"
-            }
-        }
+                     targets.each { name ->
+                         echo "➡️ Déploiement ${name}"
+                         services[name].resources.each { file ->
+                             sh "kubectl apply -f k8s/${name}/${file} -n ${NAMESPACE} || true"
+                         }
+                         sh "kubectl rollout restart deployment ${name} -n ${NAMESPACE} || true"
+                         sh "kubectl wait --for=condition=ready pod -l ${services[name].selector} -n ${NAMESPACE} --timeout=180s"
+                     }
+                 }
+             }
+         }
 
-        stage('Deploy MySQL') {
-            steps {
-                echo "➡️ Déploiement MySQL"
-                                                     sh "kubectl apply -f k8s/mysql/mysql-config.yaml -n ${NAMESPACE}"
-                                                     sh "kubectl apply -f k8s/mysql/mysql-secret.yaml -n ${NAMESPACE}"
-                sh "kubectl apply -f k8s/mysql/mysql-deployment.yaml -n ${NAMESPACE}"
-                sh "kubectl apply -f k8s/mysql/mysql-service.yaml -n ${NAMESPACE}"
-                 sh "kubectl rollout restart deployment mysql -n ${NAMESPACE}"
-            }
-        }
-
-        stage('Wait for MySQL Pod') {
-            steps {
-                sh "kubectl wait --for=condition=ready pod -l app=mysql -n ${NAMESPACE} --timeout=180s"
-            }
-        }
     }
 }
