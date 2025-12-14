@@ -75,9 +75,11 @@ pipeline {
             steps {
                 dir('k8s') {
                     echo "➡️ Déploiement dans Kubernetes"
+                    sh "pwd"
+                    sh "ls -l"
                     sh "kubectl apply -f service-registery-deployment.yaml"
                     sh "kubectl apply -f service-registery.yaml"
-                    sh "kubectl rollout restart deployment user-manager -n nip"
+                    sh "kubectl rollout restart deployment service-registery -n nip"
                 }
             }
         }
