@@ -46,7 +46,7 @@ pipeline {
                                                      sh "kubectl apply -f k8s/mysql/mysql-secret.yaml -n ${NAMESPACE}"
                 sh "kubectl apply -f k8s/mysql/mysql-deployment.yaml -n ${NAMESPACE}"
                 sh "kubectl apply -f k8s/mysql/mysql-service.yaml -n ${NAMESPACE}"
-                 sh "kubectl rollout restart deployment mysql-service -n ${NAMESPACE}"
+                 sh "kubectl rollout restart deployment mysql -n ${NAMESPACE}"
             }
         }
 
