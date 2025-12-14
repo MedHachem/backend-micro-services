@@ -77,15 +77,6 @@ pipeline {
                 sh "docker rmi ${IMAGE_NAME}:${DOCKER_TAG} || true"
             }
         }
-         stage('Init Kubernetes Context') {
-             steps {
-                 sh '''
-                 minikube update-context -p jenkins
-                 kubectl config use-context jenkins
-                 kubectl get nodes
-                 '''
-             }
-         }
 
         stage('Deploy to Kubernetes') {
             when { expression { params.ACTION == 'deploy' } }
