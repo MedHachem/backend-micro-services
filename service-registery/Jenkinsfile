@@ -75,11 +75,14 @@ pipeline {
             steps {
                 dir('service-registery/k8s') {
                     echo "➡️ Déploiement dans Kubernetes"
-                    sh "pwd"
-                    sh "ls -l"
+                     sh 'export KUBECONFIG=$(minikube kubeconfig)'
+
+                     sh 'kubectl get nodes'
                     sh "kubectl apply -f service-registery-deployment.yaml --validate=false"
                     sh "kubectl apply -f service-registery.yaml --validate=false"
                     sh "kubectl rollout restart deployment service-registery -n nip"
+                                sh 'kubectl get pods -n nip'
+                                sh 'kubectl get svc -n nip'
                 }
             }
         }
