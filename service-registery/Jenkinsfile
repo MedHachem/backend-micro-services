@@ -70,6 +70,18 @@ pipeline {
                 sh "docker rmi ${IMAGE_NAME}:${DOCKER_TAG} || true"
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                dir('k8s') {
+                    echo "➡️ Déploiement dans Kubernetes"
+                    sh "kubectl apply -f service-registery-deployment.yaml"
+                    sh "kubectl apply -f service-registery.yaml"
+                    sh "kubectl rollout restart deployment user-manager -n nip"
+                }
+            }
+        }
+
     }
 
     post {

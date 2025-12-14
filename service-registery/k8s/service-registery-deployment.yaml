@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-registery
+  namespace: nip
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-registery
+  template:
+    metadata:
+      labels:
+        app: service-registery
+    spec:
+      containers:
+        - name: service-registery
+          image: hachem27/service-registery:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8761
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
