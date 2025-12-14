@@ -11,5 +11,5 @@ data:
 
   EUREKA_SERVER_URL: http://service-registery:8761/eureka
 
-  DB_HOST: mysql
+  DB_HOST: mysql.nip-infra.svc.cluster.local
   DB_PORT: "3306"
