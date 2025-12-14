@@ -49,7 +49,7 @@ pipeline {
 
         stage('Wait for MySQL Pod') {
             steps {
-                sh "kubectl wait --for=condition=ready pod -l app=mysql -n ${NAMESPACE} --timeout=180s --kubeconfig=${KUBE_CONFIG}"
+                sh "kubectl wait --for=condition=ready pod -l app=mysql -n ${NAMESPACE} --timeout=180s"
             }
         }
     }
