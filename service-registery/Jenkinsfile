@@ -73,7 +73,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                dir('k8s') {
+                dir('service-registery/k8s') {
                     echo "➡️ Déploiement dans Kubernetes"
                     sh "pwd"
                     sh "ls -l"
