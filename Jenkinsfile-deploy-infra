@@ -42,6 +42,8 @@ pipeline {
         stage('Deploy MySQL') {
             steps {
                 echo "➡️ Déploiement MySQL"
+                                                     sh "kubectl apply -f k8s/mysql/config-map.yaml -n ${NAMESPACE}"
+                                                     sh "kubectl apply -f k8s/mysql/secret.yaml -n ${NAMESPACE}"
                 sh "kubectl apply -f k8s/mysql/mysql-deployment.yaml -n ${NAMESPACE}"
                 sh "kubectl apply -f k8s/mysql/mysql-service.yaml -n ${NAMESPACE}"
             }
