@@ -83,6 +83,8 @@ pipeline {
                                 dir('user-manager/k8s') {
                                     echo "➡️ Déploiement dans Kubernetes"
                                     sh "kubectl create namespace ${NAMESPACE} || true"
+                                     sh "kubectl apply -f config-map.yaml -n ${NAMESPACE}"
+                                     sh "kubectl apply -f secret.yaml -n ${NAMESPACE}"
                                     sh "kubectl apply -f user-manager-deployment.yaml -n ${NAMESPACE}"
                                     sh "kubectl apply -f user-manager.yaml -n ${NAMESPACE}"
                                     sh "kubectl rollout restart deployment user-manager -n ${NAMESPACE}"

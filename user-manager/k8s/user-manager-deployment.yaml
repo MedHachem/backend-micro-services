@@ -19,6 +19,9 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8082
-          env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: docker
+          envFrom:
+            - configMapRef:
+                name: user-manager-config
+            - secretRef:
+                name: user-manager-secret
+
