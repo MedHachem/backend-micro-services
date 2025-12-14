@@ -1,23 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: config-server
+  name: user-manager
   namespace: nip
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: config-server
+      app: user-manager
   template:
     metadata:
       labels:
-        app: config-server
+        app: user-manager
     spec:
       containers:
-        - name: config-server
-          image: hachem27/config-server:1.0.0
+        - name: user-manager
+          image: hachem27/user-manager:1.0.0
           imagePullPolicy: Always
           ports:
-            - containerPort: 8088
+            - containerPort: 8082
           env:
             - name: SPRING_PROFILES_ACTIVE
+              value: docker
