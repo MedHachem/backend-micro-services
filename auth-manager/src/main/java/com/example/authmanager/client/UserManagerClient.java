@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "user-manager", url = "${usermanager.url}")
+@FeignClient(name = "user-manager", url = "${user-manager.url}")
 public interface UserManagerClient {
     @PostMapping("/api/users")
     UserResponse createUser(@RequestBody UserRequest request);

@@ -1,18 +1,25 @@
 server:
   port: 8087
-
 spring:
   application:
     name: auth-manager
   profiles:
-    active: local
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  config:
+    import: optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
-logging:
-  level:
-    org.springframework.web: INFO
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+  security:
+    user:
+      name: user
+      password: password
+jwt:
+  secret: ${JWT_SECRET}
+user-manager:
+  url:  ${USER_MANAGER_URL}
+
 
 
 

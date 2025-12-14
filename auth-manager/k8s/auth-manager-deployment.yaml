@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-manager
+  namespace: nip
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-manager
+  template:
+    metadata:
+      labels:
+        app: auth-manager
+    spec:
+      containers:
+        - name: auth-manager
+          image: hachem27/auth-manager:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8087
+          envFrom:
+            - configMapRef:
+                name: auth-manager-config
+            - secretRef:
+                name: auth-manager-secret
+

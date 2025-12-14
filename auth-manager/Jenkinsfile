@@ -4,10 +4,12 @@ pipeline {
     environment {
         IMAGE_NAME = "hachem27/auth-manager"
         DOCKER_TAG = "1.0.0"
+        NAMESPACE = "nip"
     }
 
     parameters {
         string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Branche à builder')
+          choice(name: 'ACTION', choices: ['build', 'deploy'], description: 'Choisir build ou deploy')
     }
 
     stages {
@@ -29,6 +31,7 @@ pipeline {
         }
 
         stage('Build Maven') {
+                 when { expression { params.ACTION == 'build' } }
             steps {
                 dir('auth-manager') {
                     echo "➡️ Maven clean package"
@@ -38,6 +41,7 @@ pipeline {
         }
 
         stage('Build Docker Image') {
+                 when { expression { params.ACTION == 'build' } }
             steps {
                 dir('auth-manager') {
                     echo "➡️ Build Docker image avec tag ${DOCKER_TAG}"
@@ -47,6 +51,7 @@ pipeline {
         }
 
         stage('Docker Login') {
+                 when { expression { params.ACTION == 'build' } }
             steps {
                 echo "➡️ Login Docker Hub"
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
@@ -56,6 +61,7 @@ pipeline {
         }
 
         stage('Push Docker Image') {
+                 when { expression { params.ACTION == 'build' } }
             steps {
                 dir('auth-manager') {
                     echo "➡️ Push Docker image vers Docker Hub"
@@ -65,11 +71,26 @@ pipeline {
         }
 
         stage('Cleanup') {
+                 when { expression { params.ACTION == 'build' } }
             steps {
                 echo "➡️ Nettoyage des images locales"
                 sh "docker rmi ${IMAGE_NAME}:${DOCKER_TAG} || true"
             }
         }
+            stage('Deploy to Kubernetes') {
+                                    when { expression { params.ACTION == 'deploy' } }
+                                    steps {
+                                        dir('auth-manager/k8s') {
+                                            echo "➡️ Déploiement dans Kubernetes"
+                                             sh "kubectl create namespace ${NAMESPACE} || true"
+                                             sh "kubectl apply -f config-map.yaml -n ${NAMESPACE}"
+                                             sh "kubectl apply -f secret.yaml -n ${NAMESPACE}"
+                                            sh "kubectl apply -f auth-manager-deployment.yaml -n ${NAMESPACE}"
+                                            sh "kubectl apply -f auth-manager.yaml -n ${NAMESPACE}"
+                                            sh "kubectl rollout restart deployment auth-manager -n ${NAMESPACE}"
+                                        }
+                                    }
+                                }
     }
 
     post {
