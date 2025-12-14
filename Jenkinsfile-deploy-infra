@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+    environment {
+        KUBE_NAMESPACE = 'nip-infra'
+        KUBE_CONFIG = '/home/jenkins/.kube/config'
+    }
+    stages {
+        stage('Create Namespace') {
+            steps {
+                sh "kubectl create namespace ${KUBE_NAMESPACE} || echo 'Namespace exists'"
+            }
+        }
+
+        stage('Create MySQL Secret') {
+            steps {
+                sh """
+                kubectl create secret generic mysql-secret -n ${KUBE_NAMESPACE} \
+                  --from-literal=root-password=root \
+                  --from-literal=db-user=user \
+                  --from-literal=db-password=password || echo 'Secret exists'
+                """
+            }
+        }
+
+        stage('Apply MySQL PVC') {
+            steps {
+                sh "kubectl apply -f k8s/infra/mysql-pvc.yaml --kubeconfig=${KUBE_CONFIG}"
+            }
+        }
+
+        stage('Deploy MySQL') {
+            steps {
+                echo "➡️ Déploiement MySQL"
+                sh "kubectl apply -f k8s/infra/mysql-deployment.yaml --kubeconfig=${KUBE_CONFIG}"
+                sh "kubectl apply -f k8s/infra/mysql-service.yaml --kubeconfig=${KUBE_CONFIG}"
+            }
+        }
+
+        stage('Wait for MySQL Pod') {
+            steps {
+                sh "kubectl wait --for=condition=ready pod -l app=mysql -n ${KUBE_NAMESPACE} --timeout=180s --kubeconfig=${KUBE_CONFIG}"
+            }
+        }
+    }
+}
