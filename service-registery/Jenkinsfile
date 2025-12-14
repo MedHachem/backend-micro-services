@@ -4,10 +4,12 @@ pipeline {
     environment {
         IMAGE_NAME = "hachem27/service-registery"
         DOCKER_TAG = "1.0.0"
+        NAMESPACE = "nip"
     }
 
     parameters {
         string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Branche à builder')
+        choice(name: 'ACTION', choices: ['build', 'deploy'], description: 'Choisir build ou deploy')
     }
 
     stages {
@@ -29,6 +31,7 @@ pipeline {
         }
 
         stage('Build Maven') {
+            when { expression { params.ACTION == 'build' } }
             steps {
                 dir('service-registery') {
                     echo "➡️ Maven clean package"
@@ -38,6 +41,7 @@ pipeline {
         }
 
         stage('Build Docker Image') {
+            when { expression { params.ACTION == 'build' } }
             steps {
                 dir('service-registery') {
                     echo "➡️ Build Docker image avec tag ${DOCKER_TAG}"
@@ -47,6 +51,7 @@ pipeline {
         }
 
         stage('Docker Login') {
+            when { expression { params.ACTION == 'build' } }
             steps {
                 echo "➡️ Login Docker Hub"
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
@@ -56,6 +61,7 @@ pipeline {
         }
 
         stage('Push Docker Image') {
+            when { expression { params.ACTION == 'build' } }
             steps {
                 dir('service-registery') {
                     echo "➡️ Push Docker image vers Docker Hub"
@@ -65,6 +71,7 @@ pipeline {
         }
 
         stage('Cleanup') {
+            when { expression { params.ACTION == 'build' } }
             steps {
                 echo "➡️ Nettoyage des images locales"
                 sh "docker rmi ${IMAGE_NAME}:${DOCKER_TAG} || true"
@@ -72,17 +79,14 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
+            when { expression { params.ACTION == 'deploy' } }
             steps {
                 dir('service-registery/k8s') {
                     echo "➡️ Déploiement dans Kubernetes"
-                     sh 'export KUBECONFIG=$(minikube kubeconfig)'
-
-                     sh 'kubectl get nodes'
-                    sh "kubectl apply -f service-registery-deployment.yaml --validate=false"
-                    sh "kubectl apply -f service-registery.yaml --validate=false"
-                    sh "kubectl rollout restart deployment service-registery -n nip"
-                                sh 'kubectl get pods -n nip'
-                                sh 'kubectl get svc -n nip'
+                    sh "kubectl create namespace ${NAMESPACE} || true"
+                    sh "kubectl apply -f service-registery-deployment.yaml -n ${NAMESPACE}"
+                    sh "kubectl apply -f service-registery.yaml -n ${NAMESPACE}"
+                    sh "kubectl rollout restart deployment service-registery -n ${NAMESPACE}"
                 }
             }
         }
@@ -91,10 +95,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Pipeline réussi ! Docker image pushée : ${IMAGE_NAME}:${DOCKER_TAG}"
+            echo "✅ Pipeline terminé avec succès pour l'action : ${params.ACTION}"
         }
         failure {
-            echo "❌ Pipeline échoué ! Vérifie les logs."
+            echo "❌ Pipeline échoué pour l'action : ${params.ACTION}"
         }
         always {
             echo "🔄 Fin du pipeline."
