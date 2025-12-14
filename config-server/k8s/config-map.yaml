@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map-config
+  namespace: nip
+data:
+  SPRING_PROFILES_ACTIVE: prod
+
+  EUREKA_SERVER_URL: http://service-registery:8761/eureka
+
