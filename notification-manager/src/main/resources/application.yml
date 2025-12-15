@@ -2,19 +2,39 @@ server:
   port: 8095
 spring:
   profiles:
-    active: local
+    active: ${SPRING_PROFILES_ACTIVE:local}
   application:
     name: notification-manager
+  config:
+    import: optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
   amqp:
     deserialization:
       trust-all: true
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
   notifications:
-    queue: user.notifications
-    exchange: userExchange
-    routing-key: user.registered
+    queue: ${NOTIFICATIONS_QUEUE}
+    exchange: ${NOTIFICATIONS_EXCHANGE}
+    routing-key: ${NOTIFICATIONS_ROUTING_KEY}
 app:
   sms:
-    queue: sms-queue
-    exchange: smsExchange
-    routing-key: sms.send
+    queue: ${SMS_QUEUE}
+    exchange: ${SMS_EXCHANGE}
+    routing-key: ${SMS_ROUTING_KEY}
     provider: whatsapp
+    from: ${SMS_FROM}
+    account-sid: ${SMS_ACCOUNT_SID}
+    auth-token: ${SMS_AUTH_TOKEN}

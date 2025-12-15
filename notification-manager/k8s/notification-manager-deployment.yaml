@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-manager
+  namespace: nip
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-manager
+  template:
+    metadata:
+      labels:
+        app: notification-manager
+    spec:
+      containers:
+        - name: notification-manager
+          image: hachem27/notification-manager:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8095
+          envFrom:
+            - configMapRef:
+                name: notification-manager-config
+            - secretRef:
+                name: notification-manager-secret
+
