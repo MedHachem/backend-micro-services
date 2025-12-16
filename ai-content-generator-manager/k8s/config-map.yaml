@@ -15,3 +15,5 @@ data:
   LLM_HOST: ollama
   LLM_PORT: "11434"
 
+  RABBITMQ_HOST: rabbitmq
+  RABBITMQ_PORT: "5672"
