@@ -22,7 +22,7 @@ spring:
       trust-all: true
   rabbitmq:
     host: ${RABBITMQ_HOST}.nip-infra.svc.cluster.local
-    port: ${RABBITMQ_PORT}
+    port: ${RABBITMQ_AMQP_PORT}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
   notifications:

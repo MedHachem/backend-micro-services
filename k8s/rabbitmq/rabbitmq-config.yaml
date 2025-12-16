@@ -5,4 +5,5 @@ metadata:
   namespace: nip-infra
 data:
   RABBITMQ_HOST: "rabbitmq"
-  RABBITMQ_PORT: "5672"
+  RABBITMQ_AMQP_PORT: "5672"
+  RABBITMQ_MANAGEMENT_PORT: "15672"

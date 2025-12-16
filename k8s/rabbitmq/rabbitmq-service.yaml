@@ -8,5 +8,9 @@ spec:
   selector:
     app: rabbitmq
   ports:
-    - port: 15672
-      targetPort: 15672
+    - name: amqp
+      port: ${RABBITMQ_AMQP_PORT}
+      targetPort: ${RABBITMQ_AMQP_PORT}
+    - name: management
+      port: ${RABBITMQ_MANAGEMENT_PORT}
+      targetPort: ${RABBITMQ_MANAGEMENT_PORT}
