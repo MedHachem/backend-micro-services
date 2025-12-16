@@ -13,3 +13,5 @@ data:
 
   DB_HOST: mysql.nip-infra.svc.cluster.local
   DB_PORT: "3306"
+  RABBITMQ_HOST: rabbitmq
+  RABBITMQ_PORT: "5672"

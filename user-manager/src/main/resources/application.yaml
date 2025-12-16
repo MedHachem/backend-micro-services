@@ -4,7 +4,11 @@ server:
 spring:
   application:
     name: user-manager
-
+  rabbitmq:
+    host: ${RABBITMQ_HOST}.nip-infra.svc.cluster.local
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
 
