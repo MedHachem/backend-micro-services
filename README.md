@@ -31,7 +31,8 @@ Next, you’ll add a new file to this repository.
 
 Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
 
----
+---<img width="1784" height="744" alt="image" src="https://github.com/user-attachments/assets/a37b47a0-6526-46a9-bfff-dde3a9681b3f" />
+
 
 ## Clone a repository
 
