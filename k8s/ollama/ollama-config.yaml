@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ollama-config
+  namespace: nip-infra
+data:
+  LLM_HOST: "ollama"
+  LLM_PORT: "11434"

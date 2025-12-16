@@ -6,7 +6,7 @@ pipeline {
     parameters {
             string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Branche à builder')
             choice(name: 'ACTION', choices: ['deploy'], description: 'Choisir  deploy')
-            choice(name: 'SERVICE', choices: ['all','mysql','rabbitmq'], description: 'Service à déployer')
+            choice(name: 'SERVICE', choices: ['all','mysql','rabbitmq','ollama'], description: 'Service à déployer')
         }
     stages {
      stage('Checkout') {
@@ -33,6 +33,10 @@ pipeline {
                          rabbitmq: [
                              resources: ['rabbitmq-pvc.yaml','rabbitmq-deployment.yaml','rabbitmq-service.yaml','rabbitmq-config.yaml','rabbitmq-secret.yaml'],
                              selector: 'app=rabbitmq'
+                         ],
+                         ollama: [
+                             resources: ['ollama-pvc.yaml','ollama-deployment.yaml','ollama-service.yaml','ollama-config.yaml','ollama-secret.yaml'],
+                             selector: 'app=ollama'
                          ],
                      ]
 
