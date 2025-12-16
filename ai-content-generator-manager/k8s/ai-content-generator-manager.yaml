@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-content-generator-manager
+  namespace: nip
+spec:
+  type: ClusterIP
+  selector:
+    app: ai-content-generator-manager
+  ports:
+    - port: 8097
+      targetPort: 8097

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-content-generator-manager
+  namespace: nip
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-content-generator-manager
+  template:
+    metadata:
+      labels:
+        app: ai-content-generator-manager
+    spec:
+      containers:
+        - name: ai-content-generator-manager
+          image: hachem27/ai-content-generator-manager:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8097
+          envFrom:
+            - configMapRef:
+                name: ai-content-generator-manager-config
+            - secretRef:
+                name: ai-content-generator-manager-secret
+

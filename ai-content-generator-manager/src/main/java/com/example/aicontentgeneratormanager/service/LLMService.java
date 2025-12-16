@@ -13,10 +13,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class LLMService {
 
     private final WebClient webClient;
-    @Value("${llm.host}")
+    @Value("${LLM.HOST}")
     private String llmHost;
 
-    @Value("${llm.port}")
+    @Value("${LLM.PORT}")
     private String llmPort;
     public GeneratedContentResponse generateContent(String prompt) {
         try {

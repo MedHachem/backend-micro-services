@@ -1,7 +1,0 @@
-llm:
-  host: ollama
-  port: 11434
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
